@@ -7,13 +7,12 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 6501;
 const bookRouter = express.Router();
-var name = "dan";
 
 app.use(morgan('dev'));
 
 bookRouter.route('/books')
   .get((req, res) => {
-    const book = {name:"Pro .NET Memor Management", author:"Konrad Kokosa", yearPublished:2018};
+    const book = { name: 'Pro .NET Memor Management', author: 'Konrad Kokosa', yearPublished: 2018 };
 
     res.status(200).json(book);
   });
