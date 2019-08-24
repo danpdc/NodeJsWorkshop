@@ -16,52 +16,43 @@ authorRouter.use(bodyParser.json());
 // Routes
 authorRouter.route('/')
   .get(async (req, res) => {
-    await MongoService.Author.find()
-      .exec()
-      .then((data) => {
-        res.status(200).json(data);
-      })
-      .catch();
+    const result = await MongoService.Author.find().exec();
+    if(result === undefined || result === null) {
+      return res.status(500).send('Internal server error')
+    }
+    return res.status(200).json(result);
   })
   .post(async (req, res) => {
     const Author = new MongoService.Author(req.body);
-    await Author.save()
-      .then((data) => {
-        res.status(201).json(data);
-      })
-      .catch((err) => {
-        res.status(400).send(err);
-      });
+    const result = await Author.save();
+    if(result === undefined || result === null) {
+      return res.status(500).send('Internal server error');
+    }
+
+    return res.status(201).json(result);
   });
 
 authorRouter.route('/:id')
   .get(async (req, res) => {
-    await MongoService.Author.findById(req.params.id)
-      .exec()
-      .then((data) => {
-        res.status(200).json(data);
-      })
-      .catch((err) => {
-        res.status(400).send(err);
-      });
+    const result = await MongoService.Author.findById(req.params.id);
+    if(result === undefined || result == null) {
+      return res.status(500).send('Internal server error');
+    }
+    return res.status(200).json(result);
   })
   .put(async (req, res) => {
-    await MongoService.Author.findByIdAndUpdate(req.params.id, req.body)
-      .then((data) => {
-        res.status(200).json(data);
-      })
-      .catch((err) => {
-        res.status(400).send(err);
-      });
+    const result = await MongoService.Author.findByIdAndUpdate(req.params.id, req.body);
+    if(result === undefined || result == null) {
+      return res.status(500).send('Internal server error');
+    }
+    return res.status(200).json(result);
   })
   .delete(async (req, res) => {
-    await MongoService.Author.findByIdAndRemove(req.params.id)
-      .then((data) => {
-        res.status(200).json(data);
-      })
-      .catch((err) => {
-        res.status(400).send(err);
-      });
+    const result = await MongoService.Author.findByIdAndRemove(req.params.id);
+    if(result === undefined || result == null) {
+      return res.status(500).send('Internal server error');
+    }
+    return res.status(200).json(result);
   });
 
 // Module export

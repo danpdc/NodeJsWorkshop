@@ -15,54 +15,42 @@ bookRouter.use(bodyParser.json());
 // Routes
 bookRouter.route('/')
   .get(async (req, res) => {
-    await MongoService.Book.find()
-      .exec()
-      .then((data) => {
-        res.status(200).json(data);
-      })
-      .catch((err) => {
-        res.send(err);
-      });
+    const result = await MongoService.Book.find().exec();
+    if(result === undefined || result === null) {
+      return res.status(500).send('Internal server error')
+    }
+    return res.status(200).json(result);
   })
   .post(async (req, res) => {
     const Book = new MongoService.Book(req.body);
-    await Book.save()
-      .then((data) => {
-        res.status(201).json(data);
-      })
-      .catch((err) => {
-        res.status(400).send(err);
-      });
+    const result = await Book.save();
+    if(result === undefined || result === null) {
+      return res.status(500).send('Internal server error')
+    }
+    return res.status(200).json(result);
   });
 
 bookRouter.route('/:id')
   .get(async (req, res) => {
-    await MongoService.Book.findById(req.params.id)
-      .exec()
-      .then((data) => {
-        res.status(200).json(data);
-      })
-      .catch((err) => {
-        res.send(err);
-      });
+    const result = await MongoService.Book.findById(req.params.id).exec();
+    if(result === undefined || result === null) {
+      return res.status(500).send('Internal server error')
+    }
+    return res.status(200).json(result);
   })
   .put(async (req, res) => {
-    await MongoService.Book.findByIdAndUpdate(req.params.id, req.body)
-      .then((data) => {
-        res.status(200).json(data);
-      })
-      .catch((err) => {
-        res.status(400).send(err);
-      });
+    const result = await MongoService.Book.findByIdAndUpdate(req.params.id, req.body);
+    if(result === undefined || result === null) {
+      return res.status(500).send('Internal server error')
+    }
+    return res.status(200).json(result);
   })
   .delete(async (req, res) => {
-    await MongoService.Book.findByIdAndRemove(req.params.id)
-      .then(() => {
-        res.status(200).send(`Book with ID ${req.params.id} was deleted`);
-      })
-      .catch((err) => {
-        res.status(400).send(err);
-      });
+    const result = await MongoService.Book.findByIdAndRemove(req.params.id);
+    if(result === undefined || result === null) {
+      return res.status(500).send('Internal server error')
+    }
+    return res.status(200).json(result);
   });
 
 // Module export
