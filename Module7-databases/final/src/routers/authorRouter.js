@@ -3,6 +3,7 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const MongoService = require('../services/mongoService');
+const { Author, Book } = require('../services/sequelizeService');
 
 // Constants
 const authorRouter = express.Router();
@@ -16,15 +17,17 @@ authorRouter.use(bodyParser.json());
 // Routes
 authorRouter.route('/')
   .get(async (req, res) => {
-    const result = await MongoService.Author.find().exec();
+    //const result = await MongoService.Author.find().exec();
+    const result = await Author.findAll({include: [{model: Book, required: false, attributes: ['title']}]});
     if(result === undefined || result === null) {
       return res.status(500).send('Internal server error')
     }
     return res.status(200).json(result);
   })
   .post(async (req, res) => {
-    const Author = new MongoService.Author(req.body);
-    const result = await Author.save();
+    //const Author = new MongoService.Author(req.body);
+    //const result = await Author.save();
+    const result = await Author.create(req.body);
     if(result === undefined || result === null) {
       return res.status(500).send('Internal server error');
     }
@@ -34,21 +37,27 @@ authorRouter.route('/')
 
 authorRouter.route('/:id')
   .get(async (req, res) => {
-    const result = await MongoService.Author.findById(req.params.id);
+    //const result = await MongoService.Author.findById(req.params.id);
+    const result = await Author.findOne({
+      where: {id: req.params.id},
+      include: [{model: Book, required: false, attributes: ['title']}]
+    });
     if(result === undefined || result == null) {
       return res.status(500).send('Internal server error');
     }
     return res.status(200).json(result);
   })
   .put(async (req, res) => {
-    const result = await MongoService.Author.findByIdAndUpdate(req.params.id, req.body);
+    //const result = await MongoService.Author.findByIdAndUpdate(req.params.id, req.body);
+    const result = await Author.update(req.body, {where: {id: req.params.id}});
     if(result === undefined || result == null) {
       return res.status(500).send('Internal server error');
     }
     return res.status(200).json(result);
   })
   .delete(async (req, res) => {
-    const result = await MongoService.Author.findByIdAndRemove(req.params.id);
+    //const result = await MongoService.Author.findByIdAndRemove(req.params.id);
+    const result = await Author.destroy({where: {id: req.params.id}});
     if(result === undefined || result == null) {
       return res.status(500).send('Internal server error');
     }
