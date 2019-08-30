@@ -1,6 +1,9 @@
 module.exports = (sequelize, type) => {
   return sequelize.define('author', {
-    firstName: type.STRING,
+    firstName: {
+      type: type.STRING,
+      allowNull: false
+    },
     lastName: type.STRING,
     description: type.TEXT,
     country: type.STRING,
