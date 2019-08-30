@@ -1,6 +1,8 @@
 const BookGetDto = require('../dtos/bookGet');
+const BookPutPostDto = require('../dtos/bookPutPost');
 const MongoService = require('../services/mongoService');
 const { Book, Author } = require('../services/sequelizeService');
+const {ResourceNotFoundError} = require('../errorHandling/errors/validationErrors');
 
 async function getAllBooks(req, res, next) {
   // const result = await MongoService.Book.find().exec();
@@ -48,7 +50,8 @@ async function getAllBooks(req, res, next) {
 async function createBook(req, res, next) {
   try {
     //const Book = new MongoService.Book(req.body);
-    const createdBookFromDb = await Book.create(req.body);
+    const bookPutPostDto = new BookPutPostDto(req.body);
+    const createdBookFromDb = await Book.create(bookPutPostDto);
     const book = new BookGetDto(createdBookFromDb.dataValues);
     return res.status(200).json(book);
     //const result = await Book.save();
@@ -65,7 +68,7 @@ async function getBookById(req, res, next) {
       where: { id: req.params.id },
       include: [{ model: Author, required: false, attributes: ['firstName', 'lastName'] }]
     });
-    if(result === null) throw new Error(`No book with ID: ${req.params.id} was found in the database`);
+    if(result === null) throw new ResourceNotFoundError('Book');
     const bookGetDto = new BookGetDto(result.dataValues);
 
     return res.status(200).json(bookGetDto);
@@ -78,7 +81,8 @@ async function getBookById(req, res, next) {
 async function updateBook(req, res, next) {
   try {
     //const result = await MongoService.Book.findByIdAndUpdate(req.params.id, req.body);
-    const result = await Book.update(req.body, { where: { id: req.params.id } });
+    const bookPutPostDto = new BookPutPostDto(req.body);
+    const result = await Book.update(bookPutPostDto, { where: { id: req.params.id } });
     return res.status(200).send(`Updated records: ${result}`);
   }
   catch(err) {
@@ -106,12 +110,13 @@ async function getBookAuthors(req, res, next) {
         },
         include: [{ model: Author, required: false, attributes: ['firstName', 'lastName'] }]
       });
-    if (result === null) throw new Error(`No book with ID: ${req.params.id} was found in the database`);
+    if (result === null) throw new ResourceNotFoundError(`Book`);
     const bookDto = new BookGetDto(result.dataValues);
 
     return res.status(200).json(bookDto.authors);
   }
   catch(err) {
+    const internalError =
     next(err);
   }
 }

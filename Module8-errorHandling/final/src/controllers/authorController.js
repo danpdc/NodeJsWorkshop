@@ -1,6 +1,8 @@
 const AuthorGetDto = require('../dtos/authorGet');
+const AuthorPutPostDto = require('../dtos/authorPutPost');
 const MongoService = require('../services/mongoService');
 const { Book, Author } = require('../services/sequelizeService');
+const {ResourceNotFoundError} = require('../errorHandling/errors/validationErrors');
 
 async function getAllAuthors(req, res, next) {
   try {
@@ -39,6 +41,7 @@ async function createAuthor(req, res, next) {
   try {
     //const Author = new MongoService.Author(req.body);
     //const result = await Author.save();
+    const authorPutPostDto = new AuthorPutPostDto(req.body);
     const result = await Author.create(req.body);
     const author = new AuthorGetDto(result.dataValues);
     return res.status(200).json(author);
@@ -57,7 +60,7 @@ async function getAuthorById(req, res, next) {
       include: [{model: Book, required: false, attributes: ['title']}]
     });
 
-    if(result === null) throw new Error(`No author with ID: ${req.params.id} was found in the database`);
+    if(result === null) throw new ResourceNotFoundError('Author');
     const authorGetDto = new AuthorGetDto(result.dataValues);
 
     return res.status(200).json(authorGetDto);
@@ -71,7 +74,8 @@ async function getAuthorById(req, res, next) {
 async function updateAuthor(req, res, next) {
   try {
     //const result = await MongoService.Author.findByIdAndUpdate(req.params.id, req.body);
-    const result = await Author.update(req.body, {where: {id: req.params.id}});
+    const authorPutPostDto = new AuthorPutPostDto(req.body);
+    const result = await Author.update(authorPutPostDto, {where: {id: req.params.id}});
     return res.status(200).send(`Updated records: ${result}`);
 
   }

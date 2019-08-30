@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const path = require('path');
 const bookRouter = require('./routers/bookRouter');
 const authorRouter = require('./routers/authorRouter');
+const expressErrorHandler = require('./errorHandling/handlers/expressErrorHandler');
 
 // App constants
 const app = express();
@@ -24,9 +25,7 @@ app.get('/', (req, res) => {
 });
 
 //Exception handling middleware
-app.use('*', (err, req, res, next) => {
-  res.status(500).json(err.message);
-});
+app.use('*', (err, req, res, next) => expressErrorHandler(err, req, res, next))
 
 // Exporting app module
 module.exports.start = () => {
