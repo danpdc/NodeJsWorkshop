@@ -43,7 +43,7 @@ async function getAllBooks(req, res, next) {
     return res.status(200).json(bookGetDtoList);
 
   } catch (err) {
-    return next(err);
+    next(err);
   }
 }
 
@@ -57,7 +57,7 @@ async function createBook(req, res, next) {
     //const result = await Book.save();
   }
   catch (err) {
-    return next(err);
+    next(err);
   }
 }
 
@@ -74,7 +74,7 @@ async function getBookById(req, res, next) {
     return res.status(200).json(bookGetDto);
   }
   catch(err) {
-    return next(err);
+    next(err);
   }
 }
 
@@ -86,7 +86,7 @@ async function updateBook(req, res, next) {
     return res.status(200).send(`Updated records: ${result}`);
   }
   catch(err) {
-    return next(err);
+    next(err);
   }
 }
 
@@ -97,7 +97,7 @@ async function deleteBook(req, res, next) {
     return res.status(200).send(`Deleted records: ${result}`);
   }
   catch(err) {
-    return next(err);
+    next(err);
   }
 }
 
@@ -116,7 +116,8 @@ async function getBookAuthors(req, res, next) {
     return res.status(200).json(bookDto.authors);
   }
   catch(err) {
-    return next(err);
+    const internalError =
+    next(err);
   }
 }
 
@@ -131,7 +132,7 @@ async function insertBookAuthor(req, res, next) {
     return res.status(200).json(bookDto);
   }
   catch(err) {
-    return next(err);
+    next(err);
   }
 }
 
