@@ -4,7 +4,7 @@ class BookGetDto {
     this.id = persistedBook.id;
     this.title = persistedBook.title;
     this.yearPublished = persistedBook.yearPublished;
-    this.ISBN = persistedBook.ISBN,
+    this.ISBN = persistedBook.ISBN;
     this.copies = persistedBook.copies;
     this.publisher = persistedBook.publisher;
 
@@ -12,7 +12,7 @@ class BookGetDto {
   }
 
   convertAuthors(persistedAuthors) {
-    const convertedAuthors = new Array();
+    const convertedAuthors = [];
     persistedAuthors.forEach((el) => {
       convertedAuthors.push({
         name: `${el.firstName} ${el.lastName}`,

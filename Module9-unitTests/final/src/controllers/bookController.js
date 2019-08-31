@@ -5,6 +5,22 @@ const { Book, Author } = require('../services/sequelizeService');
 const { ResourceNotFoundError } = require('../errorHandling/errors/validationErrors');
 
 async function getAllBooks(req, res, next) {
+  function extractBooksFromResult(persistedBookListRaw) {
+    const persistedBookList = [];
+    persistedBookListRaw.forEach((el) => {
+      persistedBookList.push(el.dataValues);
+    });
+
+    return persistedBookList;
+  }
+
+  function getBookDtoList(persistedBookList) {
+    const bookDtoList = [];
+    persistedBookList.forEach((el) => {
+      bookDtoList.push(new BookGetDto(el));
+    });
+    return bookDtoList;
+  }
   // const result = await MongoService.Book.find().exec();
   // if(result === undefined || result === null) {
   //   return res.status(500).send('Internal server error')
@@ -20,25 +36,7 @@ async function getAllBooks(req, res, next) {
     });
 
     const extractedBooks = extractBooksFromResult(result);
-
-    function extractBooksFromResult(persistedBookListRaw) {
-      const persistedBookList = new Array();
-      persistedBookListRaw.forEach((el) => {
-        persistedBookList.push(el.dataValues);
-      });
-
-      return persistedBookList;
-    }
-
     const bookGetDtoList = getBookDtoList(extractedBooks);
-
-    function getBookDtoList(persistedBookList) {
-      const bookDtoList = new Array();
-      persistedBookList.forEach((el) => {
-        bookDtoList.push(new BookGetDto(el));
-      });
-      return bookDtoList;
-    }
 
     return res.status(200).json(bookGetDtoList);
   } catch (err) {

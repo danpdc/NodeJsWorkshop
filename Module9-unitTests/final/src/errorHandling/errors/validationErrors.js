@@ -9,7 +9,7 @@ class ResourceNotFoundError extends BaseError {
 
 class ModelValidationError extends BaseError {
   constructor(resource, resourceName, invalidProperty, reason) {
-    super(`Invalid property ${invalidProperty} for \'${resourceName}\' resource. ${reason}`);
+    super(`Invalid property ${invalidProperty} for '${resourceName}' resource. ${reason}`);
     this.data = { resource, invalidProperty, reason };
   }
 }

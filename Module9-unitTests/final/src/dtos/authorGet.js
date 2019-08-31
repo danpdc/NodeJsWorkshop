@@ -13,7 +13,7 @@ class AuthorGetDto {
   }
 
   extractBooks(persistedBooks) {
-    const extractedBooks = new Array();
+    const extractedBooks = [];
     persistedBooks.forEach((el) => {
       extractedBooks.push({
         title: el.title,

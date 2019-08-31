@@ -5,30 +5,28 @@ const { Book, Author } = require('../services/sequelizeService');
 const { ResourceNotFoundError } = require('../errorHandling/errors/validationErrors');
 
 async function getAllAuthors(req, res, next) {
+  function extractAuthorsFromResult(persistedAuthorsListRaw) {
+    const persistedAuthorList = [];
+    persistedAuthorsListRaw.forEach((el) => {
+      persistedAuthorList.push(el.dataValues);
+    });
+
+    return persistedAuthorList;
+  }
+
+  function getAuthorDtoList(persistedAuthorList) {
+    const authorDtoList = [];
+    persistedAuthorList.forEach((el) => {
+      authorDtoList.push(new AuthorGetDto(el));
+    });
+    return authorDtoList;
+  }
+
   try {
     // const result = await MongoService.Author.find().exec();
     const result = await Author.findAll({ include: [{ model: Book, required: false, attributes: ['title'] }] });
-
     const extractedAuthors = extractAuthorsFromResult(result);
-
-    function extractAuthorsFromResult(persistedAuthorsListRaw) {
-      const persistedAuthorList = new Array();
-      persistedAuthorsListRaw.forEach((el) => {
-        persistedAuthorList.push(el.dataValues);
-      });
-
-      return persistedAuthorList;
-    }
-
     const authorGetDtoList = getAuthorDtoList(extractedAuthors);
-
-    function getAuthorDtoList(persistedAuthorList) {
-      const authorDtoList = new Array();
-      persistedAuthorList.forEach((el) => {
-        authorDtoList.push(new AuthorGetDto(el));
-      });
-      return authorDtoList;
-    }
 
     return res.status(200).json(authorGetDtoList);
   } catch (err) {
@@ -41,7 +39,7 @@ async function createAuthor(req, res, next) {
     // const Author = new MongoService.Author(req.body);
     // const result = await Author.save();
     const authorPutPostDto = new AuthorPutPostDto(req.body);
-    const result = await Author.create(req.body);
+    const result = await Author.create(authorPutPostDto);
     const author = new AuthorGetDto(result.dataValues);
     return res.status(200).json(author);
   } catch (err) {

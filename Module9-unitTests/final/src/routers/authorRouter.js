@@ -3,7 +3,6 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const MongoService = require('../services/mongoService');
-const { Author, Book } = require('../services/sequelizeService');
 const authorController = require('../controllers/authorController');
 
 // Constants

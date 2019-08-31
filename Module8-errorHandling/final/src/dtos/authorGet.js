@@ -9,15 +9,14 @@ class AuthorGetDto {
     this.city = persistedAuthor.city;
     this.primaryLanguage = persistedAuthor.primaryLanguage;
 
-    if(persistedAuthor.books !== undefined)
-      this.books = this.extractBooks(persistedAuthor.books);
+    if (persistedAuthor.books !== undefined) this.books = this.extractBooks(persistedAuthor.books);
   }
 
   extractBooks(persistedBooks) {
-    let extractedBooks = new Array();
-    persistedBooks.forEach(el => {
+    const extractedBooks = [];
+    persistedBooks.forEach((el) => {
       extractedBooks.push({
-        title: el.title
+        title: el.title,
       });
     });
     return extractedBooks;

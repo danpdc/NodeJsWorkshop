@@ -24,8 +24,8 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(`${__dirname}\\index.html`));
 });
 
-//Exception handling middleware
-app.use('*', (err, req, res, next) => expressErrorHandler(err, req, res, next))
+// Exception handling middleware
+app.use('*', (err, req, res, next) => expressErrorHandler(err, req, res, next));
 
 // Exporting app module
 module.exports.start = () => {

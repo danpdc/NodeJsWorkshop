@@ -4,19 +4,18 @@ class BookGetDto {
     this.id = persistedBook.id;
     this.title = persistedBook.title;
     this.yearPublished = persistedBook.yearPublished;
-    this.ISBN = persistedBook.ISBN,
-    this.copies = persistedBook.copies
+    this.ISBN = persistedBook.ISBN;
+    this.copies = persistedBook.copies;
     this.publisher = persistedBook.publisher;
 
-    if(persistedBook.authors !== undefined)
-      this.authors = this.convertAuthors(persistedBook.authors);
+    if (persistedBook.authors !== undefined) this.authors = this.convertAuthors(persistedBook.authors);
   }
 
   convertAuthors(persistedAuthors) {
-    let convertedAuthors = new Array();
-    persistedAuthors.forEach(el => {
+    const convertedAuthors = [];
+    persistedAuthors.forEach((el) => {
       convertedAuthors.push({
-        name: el.firstName + ' ' + el.lastName
+        name: `${el.firstName} ${el.lastName}`,
       });
     });
     return convertedAuthors;
