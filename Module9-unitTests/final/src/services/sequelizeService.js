@@ -16,10 +16,10 @@ const BookAuthor = connection.define('bookAuthor', {});
 Book.belongsToMany(Author, { through: BookAuthor, unique: false });
 Author.belongsToMany(Book, { through: BookAuthor, unique: false });
 
-connection.sync({ logging: console.log, alter: true })
-  .then(() => {
-    console.log('Database & tables created!');
-  });
+//connection.sync({ logging: console.log, alter: true })
+//.then(() => {
+//console.log('Database & tables created!');
+//});
 
 module.exports = {
   Book,

@@ -3,58 +3,59 @@ const BookPutPostDto = require('../dtos/bookPutPost');
 const MongoService = require('../services/mongoService');
 const { Book, Author } = require('../services/sequelizeService');
 const { ResourceNotFoundError } = require('../errorHandling/errors/validationErrors');
+const bookMapper = require('../mappers/bookMapper');
 
 async function getAllBooks(req, res, next) {
-  function extractBooksFromResult(persistedBookListRaw) {
-    const persistedBookList = [];
-    persistedBookListRaw.forEach((el) => {
-      persistedBookList.push(el.dataValues);
-    });
 
-    return persistedBookList;
-  }
-
-  function getBookDtoList(persistedBookList) {
-    const bookDtoList = [];
-    persistedBookList.forEach((el) => {
-      bookDtoList.push(new BookGetDto(el));
-    });
-    return bookDtoList;
-  }
   // const result = await MongoService.Book.find().exec();
   // if(result === undefined || result === null) {
   //   return res.status(500).send('Internal server error')
   // }
   // return res.status(200).json(result);
-  try {
-    const result = await Book.findAll({
-      include: [{
-        model: Author,
-        required: false,
-        attributes: ['firstName', 'lastName'],
-      }],
+return new Promise(function(resolve, reject) {
+  Book.findAll({
+    include: [{
+      model: Author,
+      required: false,
+      attributes: ['firstName', 'lastName'],
+    }],
+  })
+    .then((result) => {
+      const extractedBooks = bookMapper.extractBooksFromResult(result);
+      const bookGetDtoList = bookMapper.getBookDtoList(extractedBooks);
+      resolve(res.status(200).json(bookGetDtoList));
+    })
+    .catch(err => {
+      next(err);
     });
+});
 
-    const extractedBooks = extractBooksFromResult(result);
-    const bookGetDtoList = getBookDtoList(extractedBooks);
 
-    return res.status(200).json(bookGetDtoList);
-  } catch (err) {
-    return next(err);
-  }
+
+
 }
 
 async function createBook(req, res, next) {
-  try {
-    // const Book = new MongoService.Book(req.body);
-    const bookPutPostDto = new BookPutPostDto(req.body);
-    const createdBookFromDb = await Book.create(bookPutPostDto);
-    const book = new BookGetDto(createdBookFromDb.dataValues);
-    return res.status(200).json(book);
-    // const result = await Book.save();
-  } catch (err) {
-    return next(err);
-  }
+
+  return new Promise(function(resolve, reject) {
+    let bookPutPostDto = {};
+    try {
+      bookPutPostDto = new BookPutPostDto(req.body);
+    }
+    catch(err) {
+      reject(next(err))
+    }
+
+    Book.create(bookPutPostDto)
+      .then(data => {
+        const book = new BookGetDto(data.dataValues);
+        resolve(res.status(201).json(book))
+      })
+      .catch(err => {
+        console.log(err);
+        reject(next(err));
+      });
+  });
 }
 
 async function getBookById(req, res, next) {
@@ -134,5 +135,5 @@ module.exports = {
   updateBook,
   deleteBook,
   getBookAuthors,
-  insertBookAuthor,
+  insertBookAuthor
 };

@@ -4,8 +4,11 @@
   "description": "API back end for a library management tool",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "set DEBUG=app & nodemon src/index.js"
+    "test": "mocha tests/**/*.spec.js",
+    "start": "set DEBUG=app & nodemon src/index.js",
+    "test-dtos": "mocha tests/dtoTests/*.spec.js",
+    "test-controllers": "mocha tests/controllerTests/*.spec.js",
+    "test-mappers": "mocha tests/mapperTests/*.spec.js"
   },
   "keywords": [
     "nodejs",
@@ -17,6 +20,7 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
+    "chai-as-promised": "^7.1.1",
     "chalk": "^2.4.2",
     "debug": "^4.1.1",
     "express": "^4.17.1",
@@ -26,10 +30,14 @@
     "sqlite3": "^4.1.0"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
     "eslint": "^6.2.1",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.18.2",
-    "nodemon": "^1.19.1"
+    "mocha": "^6.2.0",
+    "node-mocks-http": "^1.7.6",
+    "nodemon": "^1.19.1",
+    "sinon": "^7.4.1"
   },
   "nodemonConfig": {
     "restartable": "rs",
